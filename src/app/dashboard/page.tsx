@@ -27,7 +27,7 @@ enum Status {
 }
 
 const Dashboard = () => {
-
+    const token = localStorage.getItem('token')
     const [currentSection, setCurrentSection] = useState('table');
     const [alertBox, setAlertBox] = useState(false)
     const [userData, setUserData] = useState<UserData[]>([])
@@ -74,7 +74,10 @@ const Dashboard = () => {
             try{
                 const response = await fetch("http://localhost:3001/api",{
                     method: "GET",
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    credentials: "include",
                 })
                 const data = await response.json()
                 setUserData(data)
@@ -110,7 +113,10 @@ const Dashboard = () => {
             try{
                 const response = await fetch("http://localhost:3001/api", {
                     method: "POST",
-                    headers: {'Content-Type': 'application/json',},
+                    headers: {'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    credentials: "include",
                     body: JSON.stringify(addUser)
                 })
                 const addedUser = await response.json()
@@ -146,7 +152,10 @@ const Dashboard = () => {
         try{
             const respose = await fetch("http://localhost:3001/api", {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                credentials: "include",
                 body: JSON.stringify(editForm)
             })
 
@@ -176,7 +185,10 @@ const Dashboard = () => {
         try{
             const response = await fetch("http://localhost:3001/api", {
                 method:'DELETE',
-                headers: { 'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                credentials: "include",
                 body: JSON.stringify(user)
             })
 

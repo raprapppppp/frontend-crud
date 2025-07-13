@@ -35,9 +35,11 @@ const Login = () => {
                     credentials: "include",
                     body: JSON.stringify(loginCredentials)
                 })
+                const token = await response.json()
                 console.log(response)
                 if(response.ok){
                     router.push('/dashboard')
+                    localStorage.setItem("token", token.token)
                     setLoginCredentials({
                             username: "",
                             password: "",
