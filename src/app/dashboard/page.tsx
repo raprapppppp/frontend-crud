@@ -1,5 +1,8 @@
 'use client'
+import AlertSuccessful from '@/components/AlertSuccessful';
+import ConfirmedDelete from '@/components/ConfirmedDelete';
 import Input from '@/components/Input';
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 type UserData = {
@@ -27,9 +30,12 @@ enum Status {
 }
 
 const Dashboard = () => {
-    const token = localStorage.getItem('token')
+    //const token = localStorage.getItem('token')
+    const router = useRouter()
     const [currentSection, setCurrentSection] = useState('table');
     const [alertBox, setAlertBox] = useState(false)
+    const [alertEdit, setAlertEdit] = useState(false)
+    const [alertDelete, setAlertDelete] = useState(false)
     const [userData, setUserData] = useState<UserData[]>([])
     const [addUser, setAddUser] = useState<AddUser>({
         firstname: "",
@@ -74,9 +80,7 @@ const Dashboard = () => {
             try{
                 const response = await fetch("http://localhost:3001/api",{
                     method: "GET",
-                    headers: {'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
+                    headers: {'Content-Type': 'application/json',},
                     credentials: "include",
                 })
                 const data = await response.json()
@@ -108,14 +112,12 @@ const Dashboard = () => {
             addUser.birthdate === "" ||
             addUser.phoneNumber === "" )
             {
-            console.log("Please fill out the form")
+           
             }else{
             try{
                 const response = await fetch("http://localhost:3001/api", {
                     method: "POST",
-                    headers: {'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
+                    headers: {'Content-Type': 'application/json',},
                     credentials: "include",
                     body: JSON.stringify(addUser)
                 })
@@ -130,11 +132,13 @@ const Dashboard = () => {
                                 birthdate: "",
                                 phoneNumber: "",
                             })
+                    setAlertBox(true)
                 }else if(response.status === 500){
                     console.log(Error)
-                    setAlertBox(true)
+                    //setAlertBox(true)
                 }
                 }catch (err){
+                    console.log(err)
             }
         }
     }
@@ -152,9 +156,7 @@ const Dashboard = () => {
         try{
             const respose = await fetch("http://localhost:3001/api", {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: { 'Content-Type': 'application/json',},
                 credentials: "include",
                 body: JSON.stringify(editForm)
             })
@@ -172,6 +174,7 @@ const Dashboard = () => {
                     }
                 })
                 setUserData(updatedData)
+                setAlertEdit(true)
             }
         }catch(err){
             console.log(err)
@@ -182,12 +185,11 @@ const Dashboard = () => {
     //Delete
     const handleDelete = async (user: UserData) => {
         console.log(user)
+       
         try{
             const response = await fetch("http://localhost:3001/api", {
                 method:'DELETE',
-                headers: { 'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: { 'Content-Type': 'application/json', },
                 credentials: "include",
                 body: JSON.stringify(user)
             })
@@ -196,11 +198,37 @@ const Dashboard = () => {
                 console.log("Deleted")
                 const filteredDataAfterDelete = userData.filter((data) => data.id !== user.id)
                 setUserData(filteredDataAfterDelete)
+                setAlertDelete(false)
             }
         }catch (err){
             console.log(err)
         }
+        setAlertDelete(true)
 
+    }
+
+    const handleClose = () =>{
+        setAlertBox(false)
+        setAlertEdit(false)
+        setAlertDelete(false)
+    }
+
+    //Logout
+    const handleLogout = async () => {
+        try{
+            const response = await fetch("http://localhost:3001/api/logout", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', },
+                credentials: "include",
+            })
+
+            if(response.ok){
+                console.log("Logout sakses")
+                router.push('/login')
+            }
+        }catch (err){
+            console.log(err)
+        }
     }
 
   return (
@@ -208,7 +236,7 @@ const Dashboard = () => {
         {/* Sidebar */}
             <aside className="w-64 bg-green-700 text-white flex flex-col p-4 shadow-lg rounded-r-xl">
                 <div className="text-2xl font-bold mb-8 text-center">Admin Panel</div>
-                <nav className="flex-1">
+                <nav className="flex-1 ">
                     <ul className="space-y-2">
                         {navLink.map((nav,i) => {
                             return(
@@ -220,8 +248,10 @@ const Dashboard = () => {
                             )})}
                     </ul>
                 </nav>
-                <div className="mt-auto text-sm text-gray-300 text-center">
-                    &copy; 2025 CARD MRI
+                
+                <div className="mt-auto text-sm text-gray-300 text-center flex flex-col gap-5 ">
+                    <button onClick={handleLogout} className='px-4 py-2 flex-1 w-full text-center border-2 rounded-xl hover:bg-gray-200 hover:text-green-900 transition ease-in-out'>Logout</button>
+                    <p>&copy; 2025 CARD MRI</p>
                 </div>
             </aside>
             {/* Main Content Area */}
@@ -265,7 +295,7 @@ const Dashboard = () => {
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {userData.length === 0 ? (
                                             <tr className=''>
-                                                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">No users yet. Click "Add User" to create one!</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">No users yet. Click &quot;Add User&ldquo; to create one!</td>
                                             </tr>
                                         ) : (
                                             userData.map(user => (
@@ -348,6 +378,9 @@ const Dashboard = () => {
                         </div>
                     )}
 
+                    {alertBox && <AlertSuccessful message='Successfully Added' onClose={handleClose} />}
+                    {alertEdit && <AlertSuccessful message='Successfully Edited' onClose={handleClose} />}
+                    {alertDelete && <ConfirmedDelete alert='Item Deleted' onCancel={handleClose} />}
                 </div>
             </main>
     </div>

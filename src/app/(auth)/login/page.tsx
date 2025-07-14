@@ -5,6 +5,7 @@ import Logo from '../../../../public/card-mri.png'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import AlertBox from '@/components/AlertBox'
 
 type Info = {
     username: string,
@@ -13,41 +14,51 @@ type Info = {
 const Login = () => {
 
     const router = useRouter()
+    const [error,setError ] = useState(false)
+    const [emptyError, setEmptyError] = useState(false)
     const [loginCredentials, setLoginCredentials] = useState<Info> ({
         username: "",
         password: ""
     })
 
+    const closeAlert = () => {
+        setError(false)
+        setEmptyError(false)
+    }
+
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
        if(loginCredentials.username === "" || loginCredentials.password === ""){
-        console.log("Fill out the details")
+        setEmptyError(true)
         setLoginCredentials({
             username: "",
             password: "",
        })
-       }
-            try{
+       }else{
+           try{
                 const response = await fetch("http://localhost:3001/account/login", {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    credentials: "include",
+                     credentials: "include",
                     body: JSON.stringify(loginCredentials)
                 })
-                const token = await response.json()
-                console.log(response)
                 if(response.ok){
                     router.push('/dashboard')
-                    localStorage.setItem("token", token.token)
+                    
+                }else{
+                    setError(true)
                     setLoginCredentials({
                             username: "",
                             password: "",
                     })
-                }   
+                } 
+                 
             }catch(err){
                 console.log(err)
             }
+       }
+         
     }
 
     const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) =>{
@@ -93,6 +104,8 @@ const Login = () => {
         <Link href='/register' className="hover:underline">Sign up Here</Link>
         </div>
         </div>
+        {error && <AlertBox error='Invalid Username or Password' onClose={closeAlert}/>}
+        {emptyError && <AlertBox error='Please fill out the form' onClose={closeAlert} />}
     </div>
   )
 }

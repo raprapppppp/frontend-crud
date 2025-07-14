@@ -5,10 +5,16 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import Logo from '../../../../public/card-mri.png'
+import AlertSuccessful from '@/components/AlertSuccessful'
+import AlertBox from '@/components/AlertBox'
+
 
 const Register = () => {
 
     const router = useRouter()
+    const [successAlert, setsuccessAlert] = useState(false)
+    const [accAlreadyExist, setAccAlreadyExist] = useState(false)
+    const [emptyErr, setEmptyErr] = useState(false)
     const [loginCredentials, setLoginCredentials] = useState ({
         username: "",
         password: "",
@@ -22,13 +28,14 @@ const Register = () => {
                 return {...prevData, [name]: value}
             })
         }
-    
-    console.log(loginCredentials)
 
     const handleSubmitRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        try{
+        if(loginCredentials.username === "" || loginCredentials.password === ""){
+            setEmptyErr(true)
+        }else{
+            try{
             const response = await fetch("http://localhost:3001/account/create", {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -39,17 +46,15 @@ const Register = () => {
 
             if (!response.ok){
                 console.log("Username already exist")
+                setAccAlreadyExist(true)
             }else{
                 router.push('/login')
+                setsuccessAlert(true)
             }
         }catch (err) {
             console.log(err)
         }
-
-        setLoginCredentials({
-            username: "",
-            password: ""
-        })
+        }
     }
 
     
@@ -82,6 +87,10 @@ const Register = () => {
             <Image src={Logo} alt='Logo' className=''/>
             
         </div>
+
+        {successAlert && <AlertSuccessful message='Sakses Account Creation' onClose={()=>setsuccessAlert(false)} />}
+        {accAlreadyExist && <AlertBox error='Account already exist' onClose={()=>setAccAlreadyExist(false)}/> }
+        {emptyErr && <AlertBox error='Dont leave a blank'  onClose={()=> setEmptyErr(false)}/>}
     </div>
   )
 }
