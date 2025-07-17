@@ -16,7 +16,7 @@ const navLink = [
 	},
 	{
 		id: 3,
-		name: "Users",
+		name: "CRUD",
 		link: "/dashboard/users",
 	},
 	{

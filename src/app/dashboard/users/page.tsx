@@ -74,12 +74,29 @@ const Users = () => {
 
 	//Get the input
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, type, value } = e.target
+		const { name, value } = e.target
 
-		setAddUser((data) => ({
-			...data,
-			[name]: type === "number" ? Number(value) : value,
-		}))
+		setAddUser((prev) => {
+			if (name === "phoneNumber") {
+				const digits = value.replace(/\D/g, "").slice(0, 11)
+				return { ...prev, phoneNumber: digits }
+			}
+
+			if (name === "age") {
+				const digits = value.replace(/\D/g, "")
+				const num = parseInt(digits, 10)
+				return { ...prev, age: !isNaN(num) && num > 0 ? num : 0 }
+			}
+
+			if (name === "firstname" || name === "lastname") {
+				// Allow only letters (A-Z, a-z) and space
+				const lettersOnly = value.replace(/[^a-zA-Z\s]/g, "")
+				return { ...prev, [name]: lettersOnly }
+			}
+
+			// Default for other fields
+			return { ...prev, [name]: value }
+		})
 	}
 
 	//Button Func to add user
@@ -126,12 +143,29 @@ const Users = () => {
 
 	//Edit
 	const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { type, name, value } = e.target
+		const { name, value } = e.target
 
-		setEditForm((prevData) => ({
-			...prevData,
-			[name]: type === "number" ? Number(value) : value,
-		}))
+		setEditForm((prev) => {
+			if (name === "phoneNumber") {
+				const digits = value.replace(/\D/g, "").slice(0, 11)
+				return { ...prev, phoneNumber: digits }
+			}
+
+			if (name === "age") {
+				const digits = value.replace(/\D/g, "")
+				const num = parseInt(digits, 10)
+				return { ...prev, age: !isNaN(num) && num > 0 ? num : 0 }
+			}
+
+			if (name === "firstname" || name === "lastname") {
+				// Allow only letters (A-Z, a-z) and space
+				const lettersOnly = value.replace(/[^a-zA-Z\s]/g, "")
+				return { ...prev, [name]: lettersOnly }
+			}
+
+			// Default for other fields
+			return { ...prev, [name]: value }
+		})
 	}
 	//Save Edit
 	const handleSave = async () => {
@@ -167,7 +201,6 @@ const Users = () => {
 	//Delete
 	const handleDelete = async (user: UserData) => {
 		console.log(user)
-
 		try {
 			const response = await fetch("http://localhost:4000/api", {
 				method: "DELETE",
@@ -232,44 +265,28 @@ const Users = () => {
 								<table className="min-w-full divide-y divide-gray-200">
 									<thead className="bg-gray-50">
 										<tr>
-											<th
-												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											<th scope="col" className="table-head">
 												ID
 											</th>
-											<th
-												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											<th scope="col" className="table-head">
 												First Name
 											</th>
-											<th
-												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											<th scope="col" className="table-head">
 												Last Name
 											</th>
-											<th
-												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											<th scope="col" className="table-head">
 												Email
 											</th>
-											<th
-												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											<th scope="col" className="table-head">
 												Age
 											</th>
-											<th
-												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											<th scope="col" className="table-head">
 												Birthdate
 											</th>
-											<th
-												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+											<th scope="col" className="table-head">
 												Phone Number
 											</th>
-											<th
-												scope="col"
-												className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+											<th scope="col" className="table-head">
 												Action
 											</th>
 										</tr>
@@ -300,7 +317,7 @@ const Users = () => {
 																className="border p-1 max-w-20"
 															/>
 														</td>
-														<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+														<td className="table-data">
 															<input
 																onChange={(e) => handleEditInputChange(e)}
 																type="text"
@@ -309,7 +326,7 @@ const Users = () => {
 																className="border p-1 max-w-20"
 															/>
 														</td>
-														<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+														<td className="table-data">
 															<input
 																onChange={(e) => handleEditInputChange(e)}
 																type="text"
@@ -318,7 +335,7 @@ const Users = () => {
 																className="border p-1 max-w-20"
 															/>
 														</td>
-														<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+														<td className="table-data">
 															<input
 																onChange={(e) => handleEditInputChange(e)}
 																type="number"
@@ -327,7 +344,7 @@ const Users = () => {
 																className="border p-1 max-w-10"
 															/>
 														</td>
-														<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+														<td className="table-data">
 															<input
 																onChange={(e) => handleEditInputChange(e)}
 																type="text"
@@ -336,7 +353,7 @@ const Users = () => {
 																className="border p-1 max-w-20"
 															/>
 														</td>
-														<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+														<td className="table-data">
 															<input
 																onChange={(e) => handleEditInputChange(e)}
 																type="text"
@@ -348,7 +365,7 @@ const Users = () => {
 														<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
 															<button
 																onClick={() => handleSave()}
-																className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mr-2 transition duration-300">
+																className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 mr-2 transition duration-300">
 																<i className="fas fa-edit mr-1"></i> Save
 															</button>
 															<button
@@ -358,7 +375,7 @@ const Users = () => {
 																		id: 0,
 																	}))
 																}
-																className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-300">
+																className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition duration-300">
 																<i className="fas fa-trash-alt mr-1"></i> Cancel
 															</button>
 														</td>
@@ -368,33 +385,21 @@ const Users = () => {
 														<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
 															{user.id}
 														</td>
-														<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-															{user.firstname}
-														</td>
-														<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-															{user.lastname}
-														</td>
-														<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-															{user.email}
-														</td>
-														<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-															{user.age}
-														</td>
-														<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-															{user.birthdate}
-														</td>
-														<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-															{user.phoneNumber}
-														</td>
+														<td className="table-data">{user.firstname}</td>
+														<td className="table-data">{user.lastname}</td>
+														<td className="table-data">{user.email}</td>
+														<td className="table-data">{user.age}</td>
+														<td className="table-data">{user.birthdate}</td>
+														<td className="table-data">{user.phoneNumber}</td>
 														<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
 															<button
 																onClick={() => setEditForm(user)}
-																className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mr-2 transition duration-300">
+																className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 mr-2 transition duration-300">
 																<i className="fas fa-edit mr-1"></i> Edit
 															</button>
 															<button
 																onClick={() => handleDelete(user)}
-																className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-300">
+																className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition duration-300">
 																<i className="fas fa-trash-alt mr-1"></i> Delete
 															</button>
 														</td>
@@ -485,16 +490,10 @@ const Users = () => {
 					)}
 
 					{alertBox && (
-						<AlertSuccessful
-							message="Successfully Added"
-							onClose={handleClose}
-						/>
+						<AlertSuccessful message="Sakses Added" onClose={handleClose} />
 					)}
 					{alertEdit && (
-						<AlertSuccessful
-							message="Successfully Edited"
-							onClose={handleClose}
-						/>
+						<AlertSuccessful message="Sakses Edited" onClose={handleClose} />
 					)}
 					{alertDelete && (
 						<ConfirmedDelete alert="Item Deleted" onCancel={handleClose} />

@@ -4,7 +4,6 @@ import type { NextRequest } from "next/server"
 const protectedRoutes = ["/dashboard"]
 
 export default function middleware(request: NextRequest) {
-	console.log("test")
 	// Check if the current path is a protected route
 	const isProtectedRoute = protectedRoutes.some((route) =>
 		request.nextUrl.pathname.startsWith(route)
