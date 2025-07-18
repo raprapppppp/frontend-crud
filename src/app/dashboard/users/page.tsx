@@ -1,4 +1,5 @@
 "use client"
+import { GetUsers } from "@/api/Routes"
 import AlertSuccessful from "@/components/AlertSuccessful"
 import ConfirmedDelete from "@/components/ConfirmedDelete"
 import Input from "@/components/Input"
@@ -56,17 +57,8 @@ const Users = () => {
 	//Fetch Data to Display in Table
 	useEffect(() => {
 		const fetchdata = async () => {
-			try {
-				const response = await fetch("http://localhost:4000/api", {
-					method: "GET",
-					headers: { "Content-Type": "application/json" },
-					credentials: "include",
-				})
-				const data = await response.json()
-				setUserData(data)
-			} catch (err) {
-				console.log(err)
-			}
+			const data = await GetUsers()
+			setUserData(data)
 		}
 
 		fetchdata()
