@@ -8,6 +8,7 @@ type Users = {
 	phoneNumber: string
 }
 
+//Get
 export async function GetUsers() {
 	const response = await fetch("http://localhost:4000/api", {
 		method: "GET",
@@ -16,6 +17,5 @@ export async function GetUsers() {
 	})
 
 	const data: Users[] = await response.json()
-
 	return data
 }

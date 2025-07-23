@@ -2,6 +2,7 @@
 import React from "react"
 import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
+import { useCreateStore } from "@/app/(auth)/register/store"
 
 const navLink = [
 	{
@@ -29,6 +30,7 @@ const navLink = [
 const SideNavbar = () => {
 	const router = useRouter()
 	const pathName = usePathname()
+	const { setMessage } = useCreateStore()
 
 	//Logout
 	const handleLogout = async () => {
@@ -42,6 +44,7 @@ const SideNavbar = () => {
 			if (response.ok) {
 				console.log("Logout sakses")
 				router.push("/login")
+				setMessage("")
 			}
 		} catch (err) {
 			console.log(err)

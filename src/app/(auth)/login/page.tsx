@@ -4,65 +4,40 @@ import React, { useState } from "react"
 import Logo from "../../../../public/card-mri.png"
 import Link from "next/link"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
-import AlertBox from "@/components/AlertBox"
 
-type Info = {
-	username: string
-	password: string
-}
+import { useLoginStore } from "./store"
+import { useCreateStore } from "../register/store"
+import SuccessMessage from "@/components/SuccessMessage"
+import { useRouter } from "next/navigation"
+
 const Login = () => {
 	const router = useRouter()
-	const [error, setError] = useState(false)
-	const [emptyError, setEmptyError] = useState(false)
-	const [loginCredentials, setLoginCredentials] = useState<Info>({
-		username: "",
-		password: "",
-	})
 
-	const closeAlert = () => {
-		setError(false)
-		setEmptyError(false)
-	}
+	const { account, setAccount, login } = useLoginStore()
+	const { message, setMessage } = useCreateStore()
 
 	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 
-		if (loginCredentials.username === "" || loginCredentials.password === "") {
-			setEmptyError(true)
-			setLoginCredentials({
-				username: "",
-				password: "",
-			})
+		if (account.username === "" || account.password === "") {
 		} else {
 			try {
-				const response = await fetch("http://localhost:4000/account/login", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					credentials: "include",
-					body: JSON.stringify(loginCredentials),
-				})
-				if (response.ok) {
+				const response = await login(account)
+				if (response.error === 404) {
+					setMessage("User Does not exist ")
+				} else if (response.error === 500) {
+					setMessage("Error in Database")
+				} else if (response.error === 401) {
+					setMessage("Incorrect Password")
+				} else if (response.alert === 200) {
+					setMessage("Login Successfully")
+					setAccount({ username: "", password: "" })
 					router.push("/dashboard")
-				} else {
-					setError(true)
-					setLoginCredentials({
-						username: "",
-						password: "",
-					})
 				}
 			} catch (err) {
 				console.log(err)
 			}
 		}
-	}
-
-	const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target
-
-		setLoginCredentials((prevData) => {
-			return { ...prevData, [name]: value }
-		})
 	}
 
 	return (
@@ -73,14 +48,15 @@ const Login = () => {
 
 			<div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2 bg-gray-200 h-screen">
 				<h1 className="text-2xl font-semibold mb-4">Sign in</h1>
+				{message === "" ? <></> : <SuccessMessage />}
 				<form onSubmit={handleLogin}>
 					<div className="mb-4  ">
 						<label htmlFor="username" className="block text-gray-600">
 							Username
 						</label>
 						<input
-							onChange={handleChangeInput}
-							value={loginCredentials.username}
+							onChange={(e) => setAccount({ username: e.target.value })}
+							value={account.username}
 							type="text"
 							id="username"
 							name="username"
@@ -93,8 +69,8 @@ const Login = () => {
 							Password
 						</label>
 						<input
-							onChange={handleChangeInput}
-							value={loginCredentials.password}
+							onChange={(e) => setAccount({ password: e.target.value })}
+							value={account.password}
 							type="password"
 							id="password"
 							name="password"
@@ -127,12 +103,6 @@ const Login = () => {
 					</Link>
 				</div>
 			</div>
-			{error && (
-				<AlertBox error="Invalid Username or Password" onClose={closeAlert} />
-			)}
-			{emptyError && (
-				<AlertBox error="Please fill out the form" onClose={closeAlert} />
-			)}
 		</div>
 	)
 }
