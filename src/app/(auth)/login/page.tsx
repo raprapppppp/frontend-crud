@@ -30,10 +30,6 @@ const Login = () => {
 
 		if (loginCredentials.username === "" || loginCredentials.password === "") {
 			setEmptyError(true)
-			setLoginCredentials({
-				username: "",
-				password: "",
-			})
 		} else {
 			try {
 				const response = await fetch("http://localhost:4000/account/login", {

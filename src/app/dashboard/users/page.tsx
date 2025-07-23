@@ -60,7 +60,6 @@ const Users = () => {
 			const data = await GetUsers()
 			setUserData(data)
 		}
-
 		fetchdata()
 	}, [])
 
