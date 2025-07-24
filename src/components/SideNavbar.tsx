@@ -13,11 +13,6 @@ const navLink = [
 		link: "/dashboard",
 	},
 	{
-		id: 2,
-		name: "Pages",
-		link: "#",
-	},
-	{
 		id: 3,
 		name: "Users",
 		link: "/dashboard/users",
@@ -37,7 +32,7 @@ const SideNavbar = () => {
 
 	useEffect(() => {
 		setProfile()
-	})
+	}, [])
 
 	//Logout
 	const handleLogout = async () => {
@@ -57,8 +52,11 @@ const SideNavbar = () => {
 		<div>
 			{/* Sidebar */}
 			<aside className="w-50 bg-green-700 text-white flex flex-col p-4 shadow-lg rounded-r-xl h-full">
-				<div className="text-2xl font-bold mb-8 text-center">
-					{profile.username}
+				<div className="font-bold mb-4 text-center border-b-2 pb-4">
+					<h1>Welcome!</h1>
+					<p className="text-xl uppercase text-yellow-400">
+						{profile.username}
+					</p>
 				</div>
 
 				<nav className="flex-1 ">

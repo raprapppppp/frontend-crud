@@ -28,7 +28,7 @@ export async function GetUsers() {
 
 //Logout
 export async function Logout() {
-	const response = await fetch("http://localhost:4000/api/logout", {
+	const response = await fetch("http://localhost:4000/task/logout", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		credentials: "include",
