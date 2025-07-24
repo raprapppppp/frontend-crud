@@ -1,8 +1,10 @@
 "use client"
-import React from "react"
+import React, { useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
 import { useCreateStore } from "@/app/(auth)/register/store"
+import { Logout } from "@/api/Routes"
+import { useProfileStore } from "@/app/dashboard/store"
 
 const navLink = [
 	{
@@ -17,13 +19,13 @@ const navLink = [
 	},
 	{
 		id: 3,
-		name: "CRUD",
+		name: "Users",
 		link: "/dashboard/users",
 	},
 	{
 		id: 4,
-		name: "Setting",
-		link: "#",
+		name: "Todo",
+		link: "/dashboard/todo",
 	},
 ]
 
@@ -31,16 +33,16 @@ const SideNavbar = () => {
 	const router = useRouter()
 	const pathName = usePathname()
 	const { setMessage } = useCreateStore()
+	const { profile, setProfile } = useProfileStore()
+
+	useEffect(() => {
+		setProfile()
+	})
 
 	//Logout
 	const handleLogout = async () => {
 		try {
-			const response = await fetch("http://localhost:4000/api/logout", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				credentials: "include",
-			})
-
+			const response = await Logout()
 			if (response.ok) {
 				console.log("Logout sakses")
 				router.push("/login")
@@ -50,11 +52,15 @@ const SideNavbar = () => {
 			console.log(err)
 		}
 	}
+
 	return (
 		<div>
 			{/* Sidebar */}
 			<aside className="w-50 bg-green-700 text-white flex flex-col p-4 shadow-lg rounded-r-xl h-full">
-				<div className="text-2xl font-bold mb-8 text-center">Admin Panel</div>
+				<div className="text-2xl font-bold mb-8 text-center">
+					{profile.username}
+				</div>
+
 				<nav className="flex-1 ">
 					<ul className="space-y-2">
 						{navLink.map((nav) => {

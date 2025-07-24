@@ -1,8 +1,9 @@
-import { useCreateStore } from "@/app/(auth)/register/store"
 import React from "react"
+type Message = {
+	message: string
+}
 
-const WarningMessage = () => {
-	const { message } = useCreateStore()
+const WarningMessage: React.FC<Message> = ({ message }) => {
 	return (
 		<div
 			className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"

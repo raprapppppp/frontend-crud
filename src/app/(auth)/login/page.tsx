@@ -1,6 +1,5 @@
 "use client"
 
-import React, { useState } from "react"
 import Logo from "../../../../public/card-mri.png"
 import Link from "next/link"
 import Image from "next/image"
@@ -20,6 +19,7 @@ const Login = () => {
 		e.preventDefault()
 
 		if (account.username === "" || account.password === "") {
+			setMessage("Don't leave blank")
 		} else {
 			try {
 				const response = await login(account)

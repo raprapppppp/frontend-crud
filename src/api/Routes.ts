@@ -8,6 +8,12 @@ type Users = {
 	phoneNumber: string
 }
 
+type Profile = {
+	id: number
+	username: ""
+	role: ""
+}
+
 //Get
 export async function GetUsers() {
 	const response = await fetch("http://localhost:4000/api", {
@@ -18,4 +24,26 @@ export async function GetUsers() {
 
 	const data: Users[] = await response.json()
 	return data
+}
+
+//Logout
+export async function Logout() {
+	const response = await fetch("http://localhost:4000/api/logout", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		credentials: "include",
+	})
+
+	return response
+}
+
+//GetProfile
+export async function GetProfile() {
+	const response = await fetch("http://localhost:4000/get/profile", {
+		method: "GET",
+		headers: { "Content-Type": "application/json" },
+		credentials: "include",
+	})
+	const prof: Profile = await response.json()
+	return prof
 }
