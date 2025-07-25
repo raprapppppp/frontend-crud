@@ -14,7 +14,7 @@ enum Status {
 
 const Users = () => {
 	const { tableStatus, setTableStatus } = useCrudStore()
-	const { profile, setProfile } = useProfileStore()
+	const { profile } = useProfileStore()
 
 	return (
 		<div className="w-full">

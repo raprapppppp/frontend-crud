@@ -9,9 +9,10 @@ interface Acc {
 interface InputType {
 	iValue: Acc
 	setIvalue: (value: Partial<{ username: string; password: string }>) => void
-	createAcc: (acc: Acc) => Promise<any>
+	createAcc: (acc: Acc) => Promise<unknown>
 	message: string
 	setMessage: (mess: string) => void
+	setMessageToEmpty: () => void
 }
 
 export const useCreateStore = create<InputType>()((set) => ({
@@ -25,11 +26,12 @@ export const useCreateStore = create<InputType>()((set) => ({
 		})),
 	createAcc: async (acc) => {
 		const response = await CreateAcc(acc)
+		console.log(response)
 		return response
 	},
 	message: "",
-	setMessage: (mess) =>
-		set((state) => ({
-			message: mess,
-		})),
+	setMessage: (mess) => set({ message: mess }),
+	setMessageToEmpty: () => {
+		set({ message: "" })
+	},
 }))

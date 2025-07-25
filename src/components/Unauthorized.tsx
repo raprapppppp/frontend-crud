@@ -16,7 +16,7 @@ const Unauthorized = () => {
 				</div>
 				<div>
 					<p className="font-bold">Warning!</p>
-					<p className="text-sm">You don't have access for this part</p>
+					<p className="text-sm">You don&apos;t have access for this part</p>
 				</div>
 			</div>
 		</div>

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -12,29 +12,40 @@ const Register = () => {
 	const router = useRouter()
 
 	const { iValue, setIvalue, createAcc, message, setMessage } = useCreateStore()
+	const emptyMessage = useCreateStore((state) => state.setMessageToEmpty)
 
 	const handleSubmitRegister = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 
 		if (iValue.username === "" || iValue.password === "") {
 			setMessage("Please Fill out the form")
+			setTimeout(() => {
+				emptyMessage()
+			}, 3000)
 		} else {
 			try {
 				const res = await createAcc(iValue)
-				console.log(res, "Page")
+				console.log(res)
 
-				if (res.error === 406) {
-					setMessage("Username already exist")
-				} else if (res.message === 200) {
-					setMessage("Created Successfully")
-					setIvalue({ username: "", password: "" })
-					router.push("/login")
+				if (res && typeof res === "object") {
+					if ("error" in res && res.error === 406) {
+						setMessage("Username already exist")
+						setTimeout(emptyMessage, 3000)
+					} else if ("message" in res && res.message === 200) {
+						setMessage("Created Successfully")
+						setTimeout(emptyMessage, 1000)
+						setIvalue({ username: "", password: "" })
+						router.push("/login")
+					} else {
+						console.log("Unexpected response format")
+					}
+				} else {
+					console.log("Invalid response")
 				}
 			} catch (err) {
 				console.log(err)
 			}
 		}
-		setMessage("")
 	}
 	return (
 		<div className="flex justify-center items-center h-screen">

@@ -1,7 +1,11 @@
 import Card from "@/components/Card"
 import React from "react"
+import { cookies } from "next/headers"
 
-const Dashboard = () => {
+const Dashboard = async () => {
+	const cookieStore = await cookies()
+	const token = cookieStore.get("token")
+	console.log(token?.name)
 	return (
 		<div className="flex-1 flex flex-col p-4">
 			{/* Header */}

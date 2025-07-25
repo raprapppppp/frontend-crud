@@ -14,23 +14,39 @@ const Login = () => {
 
 	const { account, setAccount, login } = useLoginStore()
 	const { message, setMessage } = useCreateStore()
+	const emptyMessage = useCreateStore((state) => state.setMessageToEmpty)
 
 	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 
 		if (account.username === "" || account.password === "") {
 			setMessage("Don't leave blank")
+			setTimeout(() => {
+				emptyMessage()
+			}, 3000)
 		} else {
 			try {
 				const response = await login(account)
 				if (response.error === 404) {
 					setMessage("User Does not exist ")
+					setTimeout(() => {
+						emptyMessage()
+					}, 3000)
 				} else if (response.error === 500) {
 					setMessage("Error in Database")
+					setTimeout(() => {
+						emptyMessage()
+					}, 3000)
 				} else if (response.error === 401) {
 					setMessage("Incorrect Password")
+					setTimeout(() => {
+						emptyMessage()
+					}, 3000)
 				} else if (response.alert === 200) {
 					setMessage("Login Successfully")
+					setTimeout(() => {
+						emptyMessage()
+					}, 3000)
 					setAccount({ username: "", password: "" })
 					router.push("/dashboard")
 				}
